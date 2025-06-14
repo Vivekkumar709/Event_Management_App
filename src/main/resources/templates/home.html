@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Thymeleaf Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark px-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" th:href="@{/homePage}">Event Management App</a>
+
+            <div class="d-flex align-items-center gap-3">
+                <!-- <a class="nav-link text-white" th:href="@{/homePage}">Home</a> -->
+                <a class="nav-link text-white" th:href="@{/aboutPage}">About us</a>
+                <a class="nav-link text-white" th:href="@{/events}">Events</a>
+
+                <!-- If user is logged in -->
+                <div th:if="${session.userName != null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link" th:href="@{/gotoProfile}">
+                        <img th:src="${session.profileImg != null ? session.profileImg : '/images/profile-img.png'}"
+                            class="rounded-circle" alt="Profile" width="30" height="30">
+                    </a>
+                    <a class="nav-link text-white" th:href="@{/logout}">Logout</a>
+                </div>
+
+                <!-- If user is not logged in -->
+                <div th:if="${session.userName == null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link text-white" th:href="@{/loginPage}">Login</a>
+                    <a class="nav-link text-white" th:href="@{/regPage}">Signup</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🔹 Main Content -->
+    <main class="container my-5">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" th:if="${events != null}">
+            <div class="col" th:each="event : ${events}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${event.name}">Event Name</h5>
+                        <p class="card-text"><strong>Description:</strong> <span th:text="${event.description}">1</span></p>
+                        <p class="card-text"><strong>Start Date:</strong> <span th:text="${event.start}">Start</span></p>
+                        <p class="card-text"><strong>End Date:</strong> <span th:text="${event.end}">End</span></p>
+                        <a th:href="@{/eventRegister/{id}(id=${event.id})}" class="btn btn-primary">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 🔹 Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        &copy; 2025 MyApp. All rights reserved.
+    </footer>
+
+    <!-- Bootstrap 5 JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+V7E8N0y5u++8vn5ZpKZZ5STC1L9D"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

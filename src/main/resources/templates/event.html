@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark px-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" th:href="@{/homePage}">Event Management App</a>
+
+            <div class="d-flex align-items-center gap-3">
+                <a class="nav-link text-white" th:href="@{/homePage}">Home</a>
+                <a class="nav-link text-white" th:href="@{/aboutPage}">About us</a>
+
+                <!-- If user is logged in -->
+                <div th:if="${session.userName != null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link" th:href="@{/gotoProfile}">
+                        <img th:src="${session.profileImg != null ? session.profileImg : '/images/profile-img.png'}"
+                            class="rounded-circle" alt="Profile" width="30" height="30">
+                    </a>
+                    <a class="nav-link text-white" th:href="@{/logout}">Logout</a>
+                </div>
+
+                <!-- If user is not logged in -->
+                <div th:if="${session.userName == null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link text-white" th:href="@{/loginPage}">Login</a>
+                    <a class="nav-link text-white" th:href="@{/regPage}">Signup</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content with flex-grow -->
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="m-0">All Events</h2>
+            <!-- Add Event button for admin only -->
+            <a th:if="${session.userAdmin}" href="createevntPage" class="btn btn-success">Add Event</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped align-middle text-center shadow">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Action</th>
+                        <th th:if="${session.userAdmin}">Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="event, iterStat : ${events}">
+                        <td th:text="${iterStat.index + 1}">1</td> <!-- Serial Number -->
+                        <td th:text="${event.name}">Sample Event</td>
+                        <td th:text="${event.start}">2025-01-01</td>
+                        <td th:text="${event.end}">2025-01-02</td>
+                        <td>
+                            <a th:href="@{/eventRegister/{id}(id=${event.id})}"
+                                class="btn btn-sm btn-primary">Register</a>
+                        </td>
+                        <td th:if="${session.userAdmin}">
+                            <form th:action="@{/deleteEvent/{id}(id=${event.id})}" method="post"
+                                onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </main>
+
+    <!-- Sticky Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-auto">
+        &copy; 2025 MyApp. All rights reserved.
+    </footer>
+
+    <!-- Bootstrap 5 JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+V7E8N0y5u++8vn5ZpKZZ5STC1L9D"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

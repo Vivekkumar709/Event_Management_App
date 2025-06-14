@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar navbar-dark bg-dark px-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" th:href="@{/homePage}">Event Management App</a>
+
+            <div class="d-flex align-items-center gap-3">
+                <a class="nav-link text-white" th:href="@{/homePage}">Home</a>
+                <a class="nav-link text-white" th:href="@{/aboutPage}">About us</a>
+                <a class="nav-link text-white" th:href="@{/events}">Events</a>
+
+                <!-- If user is logged in -->
+                <div th:if="${session.userName != null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link" th:href="@{/gotoProfile}">
+                        <img th:src="${session.userImg != null ? session.userImg : '/images/profile-img.png'}"
+                            class="rounded-circle" alt="Profile" width="30" height="30">
+                    </a>
+                    <a class="nav-link text-white" th:href="@{/logout}">Logout</a>
+                </div>
+
+                <!-- If user is not logged in -->
+                <div th:if="${session.userName == null}" class="d-flex align-items-center gap-3">
+                    <a class="nav-link text-white" th:href="@{/loginPage}">Login</a>
+                    <a class="nav-link text-white" th:href="@{/regPage}">Signup</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="container mt-5 mb-5">
+
+        <!-- Profile Section -->
+        <form method="get" th:action="@{/updateProfilePage}" enctype="multipart/form-data">
+            <div class="row align-items-start">
+
+                <!-- Left: Profile Image & Upload -->
+                <div class="col-md-4 text-center">
+                    <img th:src="${session.userImg != null ? session.userImg : '/images/profile-img.png'}"
+                        class="rounded-circle mb-3" width="200" height="200" alt="Profile Image">
+                    <br />
+                    <button type="submit" class="btn btn-primary mt-3">Add Profile</button>
+                </div>
+
+                <!-- Right: User Info -->
+                <div class="col-md-8">
+                    <h2 th:text="${session.userName}" class="fw-bold"></h2>
+                    <p class="fs-5 mb-1"><strong>Email:</strong> <span th:text="${session.userEmail}"></span></p>
+                    <p class="fs-5"><strong>Phone:</strong> <span th:text="${session.userPhoneno}"></span></p>
+                </div>
+
+            </div>
+        </form>
+
+        <!-- Divider -->
+        <hr class="my-5">
+
+        <!-- Data Table Below Profile -->
+        <h4>User Registered Events</h4>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Event Name</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="event, iStat : ${events}">
+                    <td th:text="${iStat.index + 1}">1</td>
+                    <td th:text="${event.name}">Sample Name</td>
+                    <td th:text="${event.description}">Sample Description</td>
+                    <td th:text="${event.location}">Sample Location</td>
+                    <td th:text="${event.start}">2025-01-01</td>
+                    <td th:text="${event.end}">2025-01-02</td>
+                    <td >
+                        <form th:action="@{/deleteRegister/{id}(id=${event.id})}" method="post"
+                            onsubmit="return confirm('Are you sure you want to delete this event?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-dark text-white text-center py-3">
+        &copy; 2025 MyApp. All rights reserved.
+    </footer>
+
+</body>
+
+</html>
